@@ -1,75 +1,43 @@
-# React + TypeScript + Vite
+# CV Expert
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Editor de currículos profissionais desenvolvido pela Talisson Publicidade.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS 4
 
-## React Compiler
+## Recursos do MVP
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Dados pessoais, incluindo número residencial opcional
+- Objetivo profissional com sugestões por perfil
+- Formação acadêmica com múltiplos registros, checkbox **Cursando** e conclusão por mês/ano
+- Experiência profissional com múltiplos registros
+- Qualificações e certificações
+- Habilidades e competências com sugestões por área profissional
+- Idiomas
+- Preview A4 em tempo real
+- Navegação lateral responsiva
+- Exportação para PDF pelo diálogo de impressão do navegador, com nome sugerido a partir do cliente
+- Novo currículo com limpeza segura da sessão
 
-## Expanding the ESLint configuration
+## Desenvolvimento
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```powershell
+npm.cmd install
+npm.cmd run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Build de produção:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```powershell
+npm.cmd run build
 ```
+
+## Observações do MVP
+
+O fluxo visual de créditos e criação de arquivo na futura aba **Clientes** já está representado na confirmação de exportação. O consumo real de créditos, persistência, autenticação, pagamentos e área de clientes serão conectados em uma etapa posterior.
+
+Os dados preenchidos não são persistidos automaticamente no navegador nesta versão, evitando que informações de clientes permaneçam salvas em computadores compartilhados.

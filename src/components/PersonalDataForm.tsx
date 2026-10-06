@@ -97,21 +97,40 @@ function PersonalDataForm({
           </label>
         </div>
 
-        <label className="block text-sm font-medium text-slate-700">
-          Endereço
+        <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_160px]">
+          <label className="block text-sm font-medium text-slate-700">
+            Endereço
 
-          <input
-            type="text"
-            value={personalData.address}
-            onChange={(event) =>
-              onChange('address', event.target.value)
-            }
-            placeholder="Cidade, Estado ou endereço"
-            spellCheck={false}
-            autoCorrect="off"
-            className={inputClass}
-          />
-        </label>
+            <input
+              type="text"
+              value={personalData.address}
+              onChange={(event) =>
+                onChange('address', event.target.value)
+              }
+              placeholder="Rua, avenida, bairro ou cidade"
+              spellCheck={false}
+              autoCorrect="off"
+              className={inputClass}
+            />
+          </label>
+
+          <label className="block text-sm font-medium text-slate-700">
+            Número <span className="font-normal text-slate-400">(opcional)</span>
+
+            <input
+              type="text"
+              value={personalData.houseNumber}
+              maxLength={12}
+              onChange={(event) =>
+                onChange('houseNumber', event.target.value)
+              }
+              placeholder="850 ou S/N"
+              spellCheck={false}
+              autoCorrect="off"
+              className={inputClass}
+            />
+          </label>
+        </div>
 
         <div>
           <span className="block text-sm font-medium text-slate-700">
