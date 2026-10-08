@@ -77,10 +77,27 @@ const createLanguage = (): Language => ({
   level: 'intermediario',
 })
 
+function sanitizePdfFileName(value: string) {
+  const fileName = value
+    .trim()
+    .replace(/\.pdf$/i, '')
+    .replace(/[<>:"/\\|?*\r\n\t]/g, '-')
+    .replace(/\s+/g, ' ')
+    .replace(/^[. ]+|[. ]+$/g, '')
+    .slice(0, 100)
+
+  if (!fileName) return 'curriculo'
+  if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(fileName)) {
+    return `${fileName}-curriculo`
+  }
+  return fileName
+}
+
 function App() {
   const [activeSection, setActiveSection] = useState(0)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [exportModalOpen, setExportModalOpen] = useState(false)
+  const [exportFileName, setExportFileName] = useState('')
 
   const [personalData, setPersonalData] =
     useState<PersonalData>(emptyPersonalData)
@@ -247,22 +264,26 @@ function App() {
     setActiveSection(0)
   }
 
-  const pdfBaseName = buildPdfBaseName(personalData.name)
+  const openExportModal = () => {
+    setExportFileName(buildPdfBaseName(personalData.name))
+    setExportModalOpen(true)
+  }
 
   const confirmExport = () => {
+    const safeFileName = sanitizePdfFileName(exportFileName)
     const originalTitle = document.title
     const restoreTitle = () => {
       document.title = originalTitle
     }
 
-    document.title = pdfBaseName
+    document.title = safeFileName
     window.addEventListener('afterprint', restoreTitle, { once: true })
     setExportModalOpen(false)
 
     window.setTimeout(() => {
       window.print()
       window.setTimeout(() => {
-        if (document.title === pdfBaseName) restoreTitle()
+        if (document.title === safeFileName) restoreTitle()
       }, 1500)
     }, 120)
   }
@@ -288,7 +309,7 @@ function App() {
       <div className="app-screen min-h-screen bg-[#969696] text-slate-900">
         <Header
           onOpenPreview={() => setPreviewOpen(true)}
-          onOpenExport={() => setExportModalOpen(true)}
+          onOpenExport={openExportModal}
           onNewResume={resetResume}
         />
 
@@ -395,7 +416,8 @@ function App() {
 
         <ExportCreditModal
           open={exportModalOpen}
-          fileName={`${pdfBaseName}.pdf`}
+          fileName={exportFileName}
+          onFileNameChange={setExportFileName}
           onCancel={() => setExportModalOpen(false)}
           onConfirm={confirmExport}
         />

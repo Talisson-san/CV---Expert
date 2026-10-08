@@ -57,8 +57,7 @@ function ResumePreview({
       />
 
       <aside
-        className="fixed bottom-0 right-0 top-16 z-50 flex flex-col border-l border-slate-400 bg-[#d7d7d7] shadow-2xl"
-        style={{ width: 'min(860px, calc(100vw - 12px))' }}
+        className="fixed bottom-0 right-0 top-16 z-50 flex w-[min(860px,calc(100vw-12px))] flex-col border-l border-slate-400 bg-[#d7d7d7] shadow-2xl"
       >
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-300 bg-slate-50 px-4 sm:px-5">
           <div>

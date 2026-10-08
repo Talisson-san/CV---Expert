@@ -50,6 +50,7 @@ function PersonalDataForm({
           <input
             type="text"
             value={personalData.name}
+            maxLength={120}
             onChange={(event) =>
               onChange('name', event.target.value)
             }
@@ -69,10 +70,12 @@ function PersonalDataForm({
             <input
               type="tel"
               value={personalData.phone}
+              maxLength={30}
               onChange={(event) =>
                 onChange('phone', event.target.value)
               }
               placeholder="(00) 00000-0000"
+              autoComplete="off"
               spellCheck={false}
               autoCorrect="off"
               className={inputClass}
@@ -85,10 +88,12 @@ function PersonalDataForm({
             <input
               type="email"
               value={personalData.email}
+              maxLength={254}
               onChange={(event) =>
                 onChange('email', event.target.value)
               }
               placeholder="seuemail@exemplo.com"
+              autoComplete="off"
               spellCheck={false}
               autoCorrect="off"
               autoCapitalize="off"
@@ -104,10 +109,12 @@ function PersonalDataForm({
             <input
               type="text"
               value={personalData.address}
+              maxLength={180}
               onChange={(event) =>
                 onChange('address', event.target.value)
               }
               placeholder="Rua, avenida, bairro ou cidade"
+              autoComplete="off"
               spellCheck={false}
               autoCorrect="off"
               className={inputClass}
@@ -125,6 +132,7 @@ function PersonalDataForm({
                 onChange('houseNumber', event.target.value)
               }
               placeholder="850 ou S/N"
+              autoComplete="off"
               spellCheck={false}
               autoCorrect="off"
               className={inputClass}
