@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import AuthDialog from './components/AuthDialog'
+import type { AuthMode } from './components/AuthDialog'
 import EducationForm from './components/EducationForm'
 import ExportCreditModal from './components/ExportCreditModal'
 import ExperienceForm from './components/ExperienceForm'
@@ -15,6 +17,8 @@ import SkillsForm from './components/SkillsForm'
 import { sections } from './data/resumeData'
 import type { ProfessionalArea } from './data/resumeData'
 import { buildPdfBaseName } from './utils/formatResume'
+import { useAuth } from './hooks/useAuth'
+import { supabase } from './lib/supabase'
 import type {
   Education,
   Experience,
@@ -94,6 +98,10 @@ function sanitizePdfFileName(value: string) {
 }
 
 function App() {
+  const { user, authLoading, recoveryRequired, completeRecovery } = useAuth()
+  const [authOpen, setAuthOpen] = useState(false)
+  const [authMode, setAuthMode] = useState<AuthMode>('login')
+  const [signOutPending, setSignOutPending] = useState(false)
   const [activeSection, setActiveSection] = useState(0)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [exportModalOpen, setExportModalOpen] = useState(false)
@@ -232,6 +240,20 @@ function App() {
     setLanguages((current) => current.filter((language) => language.id !== id))
   }
 
+  const clearResume = () => {
+    setPersonalData(emptyPersonalData)
+    setProfessionalArea('')
+    setProfessionalObjective('')
+    setEducationList([createEducation()])
+    setExperienceList([createExperience()])
+    setQualificationList([createQualification()])
+    setSkills([])
+    setLanguages([createLanguage()])
+    setPreviewOpen(false)
+    setExportModalOpen(false)
+    setActiveSection(0)
+  }
+
   const resetResume = () => {
     const hasContent =
       Object.values(personalData).some(Boolean) ||
@@ -251,25 +273,39 @@ function App() {
       return
     }
 
-    setPersonalData(emptyPersonalData)
-    setProfessionalArea('')
-    setProfessionalObjective('')
-    setEducationList([createEducation()])
-    setExperienceList([createExperience()])
-    setQualificationList([createQualification()])
-    setSkills([])
-    setLanguages([createLanguage()])
-    setPreviewOpen(false)
-    setExportModalOpen(false)
-    setActiveSection(0)
+    clearResume()
   }
 
   const openExportModal = () => {
+    if (authLoading) return
+    if (!user || recoveryRequired) {
+      setAuthMode('login')
+      setAuthOpen(true)
+      return
+    }
     setExportFileName(buildPdfBaseName(personalData.name))
     setExportModalOpen(true)
   }
 
+  const signOut = async () => {
+    setSignOutPending(true)
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        window.alert('Não foi possível sair da conta. Tente novamente.')
+      } else {
+        clearResume() // Evita exibir dados de um currículo após a saída da conta.
+      }
+    } catch {
+      window.alert('Não foi possível sair da conta. Tente novamente.')
+    } finally {
+      setSignOutPending(false)
+    }
+  }
+
   const confirmExport = () => {
+    // Não existe débito seguro de créditos no servidor: produção não pode exportar.
+    if (!import.meta.env.DEV || !user || recoveryRequired) return
     const safeFileName = sanitizePdfFileName(exportFileName)
     const originalTitle = document.title
     const restoreTitle = () => {
@@ -308,6 +344,11 @@ function App() {
     <>
       <div className="app-screen min-h-screen bg-[#969696] text-slate-900">
         <Header
+          accountEmail={user?.email ?? null}
+          authLoading={authLoading}
+          signOutPending={signOutPending}
+          onOpenAuth={() => { setAuthMode('login'); setAuthOpen(true) }}
+          onSignOut={signOut}
           onOpenPreview={() => setPreviewOpen(true)}
           onOpenExport={openExportModal}
           onNewResume={resetResume}
@@ -420,10 +461,21 @@ function App() {
           onFileNameChange={setExportFileName}
           onCancel={() => setExportModalOpen(false)}
           onConfirm={confirmExport}
+          localOnly={import.meta.env.DEV}
         />
+        {(authOpen || recoveryRequired) && (
+          <AuthDialog
+            key={recoveryRequired ? 'update-password' : authMode}
+            mode={recoveryRequired ? 'update-password' : authMode}
+            onChangeMode={setAuthMode}
+            onClose={() => { if (!recoveryRequired) setAuthOpen(false) }}
+            onAuthenticated={() => setAuthOpen(false)}
+            onPasswordUpdated={() => { completeRecovery(); setAuthOpen(false) }}
+          />
+        )}
       </div>
 
-      <div className="print-root" aria-hidden="true">
+      {import.meta.env.DEV && <div className="print-root" aria-hidden="true">
         <ResumeDocument
           personalData={personalData}
           professionalObjective={professionalObjective}
@@ -433,7 +485,7 @@ function App() {
           skills={skills}
           languages={languages}
         />
-      </div>
+      </div>}
     </>
   )
 }

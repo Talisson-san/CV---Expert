@@ -1,10 +1,20 @@
 type HeaderProps = {
+  accountEmail: string | null
+  authLoading: boolean
+  signOutPending: boolean
+  onOpenAuth: () => void
+  onSignOut: () => void
   onOpenPreview: () => void
   onOpenExport: () => void
   onNewResume: () => void
 }
 
 function Header({
+  accountEmail,
+  authLoading,
+  signOutPending,
+  onOpenAuth,
+  onSignOut,
   onOpenPreview,
   onOpenExport,
   onNewResume,
@@ -22,6 +32,14 @@ function Header({
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          {accountEmail ? (
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="hidden max-w-32 truncate text-xs text-slate-600 xl:inline" title={accountEmail}>{accountEmail}</span>
+              <button type="button" disabled={signOutPending} onClick={onSignOut} className="rounded-lg border border-slate-300 px-2 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">Sair</button>
+            </div>
+          ) : (
+            <button type="button" disabled={authLoading} onClick={onOpenAuth} className="rounded-lg border border-slate-300 px-2 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">Entrar</button>
+          )}
           <button
             type="button"
             onClick={onNewResume}

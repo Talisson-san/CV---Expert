@@ -4,6 +4,7 @@ type ExportCreditModalProps = {
   onFileNameChange: (nextValue: string) => void
   onCancel: () => void
   onConfirm: () => void
+  localOnly: boolean
 }
 
 function ExportCreditModal({
@@ -12,6 +13,7 @@ function ExportCreditModal({
   onFileNameChange,
   onCancel,
   onConfirm,
+  localOnly,
 }: ExportCreditModalProps) {
   if (!open) return null
 
@@ -30,7 +32,7 @@ function ExportCreditModal({
           Exportar currículo para PDF
         </h2>
         <p className="mt-4 text-sm leading-6 text-slate-600">
-          Ao exportar, você consumirá um crédito. Será criado um arquivo na aba “Clientes” e futuramente você poderá editá-lo por lá.
+          A exportação oficial do PDF exigirá uma conta e um crédito disponível. O sistema de créditos ainda está em implementação.
         </p>
 
         <div className="mt-4">
@@ -59,7 +61,7 @@ function ExportCreditModal({
         </div>
 
         <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800">
-          Ambiente local: o desconto do crédito e o registro em Clientes serão conectados quando implementarmos contas e persistência. Na janela de impressão do Chrome, deixe “Cabeçalhos e rodapés” desativado para não incluir data e endereço da página no PDF.
+          {localOnly ? 'Teste local: esta impressão não consome créditos e não registra arquivos. Desative “Cabeçalhos e rodapés” no Chrome.' : 'Exportação desativada nesta versão até a implementação do débito seguro e da geração autorizada do PDF no servidor.'}
         </p>
 
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -73,10 +75,10 @@ function ExportCreditModal({
           <button
             type="button"
             onClick={onConfirm}
-            disabled={!fileName.trim()}
+            disabled={!localOnly || !fileName.trim()}
             className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Continuar e exportar
+            {localOnly ? 'Continuar e exportar (teste)' : 'Exportação em preparação'}
           </button>
         </div>
       </div>
